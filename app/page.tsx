@@ -1,5 +1,7 @@
 export default function Home() {
   return (
-    <h1>Calendar Clone</h1>
-  )
+    <div className="flex">
+      flex <h1 className="text-3xl font-bold">Cal Clone</h1>
+    </div>
+  );
 }
