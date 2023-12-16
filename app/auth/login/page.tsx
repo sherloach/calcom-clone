@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { AlertCircle } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { AlertCircle } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const Login = () => {
   const onSubmit = () => {};
@@ -14,14 +15,7 @@ const Login = () => {
     <div className="flex min-h-screen flex-col items-center justify-center bg-subtle py-12">
       <h3 className="mx-auto mb-auto">
         <strong>
-          <Image
-            src="/logo.svg"
-            alt="Cal"
-            title="Cal"
-            placeholder="empty"
-            width="74"
-            height="16"
-          />
+          <Image src="/logo.svg" alt="Cal" title="Cal" placeholder="empty" width="74" height="16" />
         </strong>
       </h3>
       <div className="text-center sm:mx-auto sm:w-full sm:max-w-md">
@@ -35,12 +29,7 @@ const Login = () => {
                 <Label id="email" className="mb-2">
                   Email address
                 </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="johndoe@example.com"
-                  className="rounded-md"
-                />
+                <Input id="email" type="email" placeholder="johndoe@example.com" className="rounded-md" />
                 <div className="mt-2 flex items-center gap-x-2 text-sm text-red-700">
                   <AlertCircle width="13" height="13" />
                   <p>error</p>
@@ -64,8 +53,7 @@ const Login = () => {
               <Button
                 type="submit"
                 color="secondary"
-                className="w-full justify-center bg-brand-default text-brand disabled:bg-[#9ca3af]"
-              >
+                className="w-full justify-center bg-brand-default text-brand disabled:bg-[#9ca3af]">
                 Sign in
               </Button>
             </div>
