@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { AlertCircle } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { AlertCircle } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const Login = () => {
   const onSubmit = () => {};
@@ -52,7 +52,6 @@ const Login = () => {
               </div>
               <Button
                 type="submit"
-                color="secondary"
                 className="w-full justify-center bg-brand-default text-brand disabled:bg-[#9ca3af]">
                 Sign in
               </Button>

@@ -107,8 +107,7 @@ module.exports = {
         },
       },
       animation: {
-        "fade-in-up":
-          "fade-in-up 600ms var(--animation-delay, 0ms) cubic-bezier(.21,1.02,.73,1) forwards",
+        "fade-in-up": "fade-in-up 600ms var(--animation-delay, 0ms) cubic-bezier(.21,1.02,.73,1) forwards",
         spinning: "spinning 0.75s linear infinite",
       },
       boxShadow: {
@@ -123,14 +122,14 @@ module.exports = {
         mono: ["Roboto Mono", "monospace"],
       },
       backgroundImage: {
-        "gradient-primary":
-          "radial-gradient(162.05% 170% at 109.58% 35%, #667593 0%, #E3E3E3 100%)",
+        "gradient-primary": "radial-gradient(162.05% 170% at 109.58% 35%, #667593 0%, #E3E3E3 100%)",
       },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
     require("@tailwindcss/typography"),
+    require("tailwindcss-radix")(),
     require("tailwind-scrollbar")({ nocompatible: true }),
   ],
   variants: {
