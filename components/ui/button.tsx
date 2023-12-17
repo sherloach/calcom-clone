@@ -47,7 +47,7 @@ const buttonVariants = cva(
         primary:
           "focus-visible:ring-offset disabled:text-brand-subtle disabled:hover:text-brand-default bg-brand-default text-brand hover:bg-brand-emphasis focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-default disabled:bg-brand-subtle disabled:opacity-40 disabled:hover:bg-brand-subtle disabled:hover:opacity-40",
         secondary:
-          "focus-visible:ring-offset focus-visible:ring-empthasis border  border-default bg-default text-emphasis hover:border-emphasis hover:bg-muted focus-visible:bg-subtle focus-visible:outline-none focus-visible:ring-2 disabled:border-subtle disabled:bg-opacity-30 disabled:text-muted disabled:hover:border-subtle disabled:hover:bg-default disabled:hover:bg-opacity-30 disabled:hover:text-muted",
+          "focus-visible:ring-offset focus-visible:ring-empthasis border border-default bg-default text-emphasis hover:border-emphasis hover:bg-muted focus-visible:bg-subtle focus-visible:outline-none focus-visible:ring-2 disabled:border-subtle disabled:bg-opacity-30 disabled:text-muted disabled:hover:border-subtle disabled:hover:bg-default disabled:hover:bg-opacity-30 disabled:hover:text-muted",
         minimal:
           "focus-visible:ring-offset focus-visible:ring-empthasis text-emphasis hover:bg-subtle focus-visible:bg-subtle focus-visible:outline-none focus-visible:ring-2 disabled:border-subtle disabled:bg-opacity-30 disabled:text-muted disabled:hover:border-subtle disabled:hover:bg-transparent disabled:hover:text-muted",
         destructive:

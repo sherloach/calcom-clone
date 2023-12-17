@@ -1,10 +1,17 @@
-import { AlertCircle, CalendarHeart, Circle, Link2, Users } from "lucide-react";
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, CalendarHeart, Link2, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+import HintsOrErrors from "@/components/form/HintsOrErrors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { isPasswordValid } from "@/lib/isPasswordValid";
 
 const FEATURES = [
   {
@@ -24,7 +31,42 @@ const FEATURES = [
   },
 ];
 
+const signupSchema = z.object({
+  username: z.string().refine((value) => !value.includes("+"), {
+    message: "String should not contain a plus symbol (+).",
+  }),
+  email: z.string().email(),
+  password: z.string().superRefine((data, ctx) => {
+    const isStrict = false;
+    const result = isPasswordValid(data, true, isStrict);
+    Object.keys(result).map((key: string) => {
+      if (!result[key as keyof typeof result]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key],
+          message: key,
+        });
+      }
+    });
+  }),
+});
+
+type FormValues = z.infer<typeof signupSchema>;
+
 const Signup = () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, dirtyFields },
+  } = useForm<FormValues>({
+    resolver: zodResolver(signupSchema),
+    mode: "onChange",
+  });
+
+  const onSubmit = (data) => console.log(data);
+  console.log("errors", errors);
+
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-muted 2xl:bg-default">
       <div className="grid w-full max-w-[1440px] grid-cols-1 grid-rows-1 bg-muted lg:grid-cols-2 2xl:rounded-[20px] 2xl:border 2xl:border-subtle 2xl:py-6">
@@ -36,7 +78,7 @@ const Signup = () => {
             </p>
           </div>
           <div className="mt-10">
-            <form className="flex flex-col gap-4">
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit((d) => console.log(d))}>
               <div>
                 <Label htmlFor="username" className="mb-2">
                   Username
@@ -48,29 +90,33 @@ const Signup = () => {
                     </div>
                   </div>
                   <Input
-                    v-model="username"
                     placeholder="username"
                     className="!my-0 mb-2 h-9 rounded-md rounded-l-none border-l-0 bg-default text-sm leading-4 text-emphasis !ring-0 transition placeholder:text-muted hover:border-emphasis focus:border-neutral-300 focus:ring-2 focus:ring-brand-default disabled:cursor-not-allowed disabled:bg-subtle disabled:hover:border-subtle"
+                    {...register("username")}
                   />
                 </div>
-                <div className="mt-2 flex items-center gap-x-2 text-sm text-red-700">
-                  <AlertCircle width="13" height="13" />
-                  <p>errors</p>
-                </div>
+                {errors.username?.message && (
+                  <div className="mt-2 flex items-center gap-x-2 text-sm text-red-700">
+                    <AlertCircle width="13" height="13" />
+                    <p>{errors.username?.message}</p>
+                  </div>
+                )}
               </div>
               <div>
                 <Label htmlFor="email" className="mb-2">
                   Email
                 </Label>
                 <Input
-                  v-model="email"
                   placeholder="jdoe@example.com"
                   className="mb-2 h-9 rounded-md bg-default text-sm leading-4 text-emphasis transition placeholder:text-muted hover:border-emphasis focus:border-neutral-300 focus:ring-2 focus:ring-brand-default disabled:cursor-not-allowed disabled:bg-subtle disabled:hover:border-subtle"
+                  {...register("email")}
                 />
-                <div className="mt-2 flex items-center gap-x-2 text-sm text-red-700">
-                  <AlertCircle width="13" height="13" />
-                  <p>errors</p>
-                </div>
+                {errors.email?.message && (
+                  <div className="mt-2 flex items-center gap-x-2 text-sm text-red-700">
+                    <AlertCircle width="13" height="13" />
+                    <p>{errors.email?.message}</p>
+                  </div>
+                )}
               </div>
               <div>
                 <Label htmlFor="password" className="mb-2">
@@ -78,34 +124,22 @@ const Signup = () => {
                 </Label>
                 <div>
                   <Input
-                    v-model="password"
                     type="password"
                     placeholder="•••••••••••••"
                     className="mb-2 h-9 rounded-md bg-default text-sm leading-4 text-emphasis transition placeholder:text-muted hover:border-emphasis focus:border-neutral-300 focus:ring-2 focus:ring-brand-default disabled:cursor-not-allowed disabled:bg-subtle disabled:hover:border-subtle"
+                    {...register("password")}
                   />
-                  <div className="mt-2 flex items-center gap-x-2 text-sm text-red-700">
-                    <AlertCircle width="13" height="13" />
-                    <p>errors</p>
-                  </div>
                 </div>
-                <div className="mt-2 flex items-center text-sm text-default">
-                  <ul className="ml-2">
-                    <li>
-                      <Circle fill="currentColor" width="5" className="mx-1 inline-block" /> Mix of uppercase
-                      &amp; lowercase letters
-                    </li>
-                    <li>
-                      <Circle fill="currentColor" width="5" className="mx-1 inline-block" /> Minimum 7
-                      characters long
-                    </li>
-                    <li>
-                      <Circle fill="currentColor" width="5" className="mx-1 inline-block" /> Contain at least
-                      1 number
-                    </li>
-                  </ul>
-                </div>
+                <HintsOrErrors
+                  hintErrors={["caplow", "min", "num"]}
+                  errors={errors.password}
+                  dirty={dirtyFields.password}
+                />
               </div>
-              <Button type="submit" className="w-full justify-center rounded-md">
+              <Button
+                type="submit"
+                className="w-full justify-center rounded-md"
+                disabled={!watch("email") || !watch("password") || !!errors.email || !!errors.username}>
                 Create Account
               </Button>
             </form>
