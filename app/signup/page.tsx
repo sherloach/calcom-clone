@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { signup } from "@/actions/auth/signup/signup";
 import HintsOrErrors from "@/components/form/HintsOrErrors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +32,7 @@ const FEATURES = [
   },
 ];
 
-const signupSchema = z.object({
+export const signupSchema = z.object({
   username: z.string().refine((value) => !value.includes("+"), {
     message: "String should not contain a plus symbol (+).",
   }),
@@ -51,7 +52,7 @@ const signupSchema = z.object({
   }),
 });
 
-type FormValues = z.infer<typeof signupSchema>;
+export type FormValues = z.infer<typeof signupSchema>;
 
 const Signup = () => {
   const {
@@ -64,9 +65,6 @@ const Signup = () => {
     mode: "onChange",
   });
 
-  const onSubmit = (data) => console.log(data);
-  console.log("errors", errors);
-
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-muted 2xl:bg-default">
       <div className="grid w-full max-w-[1440px] grid-cols-1 grid-rows-1 bg-muted lg:grid-cols-2 2xl:rounded-[20px] 2xl:border 2xl:border-subtle 2xl:py-6">
@@ -78,7 +76,7 @@ const Signup = () => {
             </p>
           </div>
           <div className="mt-10">
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit((d) => console.log(d))}>
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit((d) => signup(d))}>
               <div>
                 <Label htmlFor="username" className="mb-2">
                   Username
