@@ -1,14 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, CalendarHeart, Link2, Users } from "lucide-react";
+import { CalendarHeart, Link2, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { signup } from "@/actions/auth/signup/signup";
+import { Form } from "@/components/form/Form";
 import HintsOrErrors from "@/components/form/HintsOrErrors";
+import { TextField } from "@/components/form/TextField";
+import UsernameField from "@/components/form/UsernameField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,15 +58,16 @@ export const signupSchema = z.object({
 export type FormValues = z.infer<typeof signupSchema>;
 
 const Signup = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors, dirtyFields },
-  } = useForm<FormValues>({
+  const formMethods = useForm<FormValues>({
     resolver: zodResolver(signupSchema),
     mode: "onChange",
   });
+
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = formMethods;
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-muted 2xl:bg-default">
@@ -76,8 +80,11 @@ const Signup = () => {
             </p>
           </div>
           <div className="mt-10">
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit((d) => signup(d))}>
-              <div>
+            <Form
+              className="flex flex-col gap-4"
+              form={formMethods}
+              handleSubmit={async (values) => await signup(values)}>
+              {/* <div>
                 <Label htmlFor="username" className="mb-2">
                   Username
                 </Label>
@@ -99,23 +106,9 @@ const Signup = () => {
                     <p>{errors.username?.message}</p>
                   </div>
                 )}
-              </div>
-              <div>
-                <Label htmlFor="email" className="mb-2">
-                  Email
-                </Label>
-                <Input
-                  placeholder="jdoe@example.com"
-                  className="mb-2 h-9 rounded-md bg-default text-sm leading-4 text-emphasis transition placeholder:text-muted hover:border-emphasis focus:border-neutral-300 focus:ring-2 focus:ring-brand-default disabled:cursor-not-allowed disabled:bg-subtle disabled:hover:border-subtle"
-                  {...register("email")}
-                />
-                {errors.email?.message && (
-                  <div className="mt-2 flex items-center gap-x-2 text-sm text-red-700">
-                    <AlertCircle width="13" height="13" />
-                    <p>{errors.email?.message}</p>
-                  </div>
-                )}
-              </div>
+              </div> */}
+              <UsernameField label={"username"} {...register("username")} />
+              <TextField label={"email"} type="email" {...register("email")} />
               <div>
                 <Label htmlFor="password" className="mb-2">
                   Password
@@ -128,11 +121,7 @@ const Signup = () => {
                     {...register("password")}
                   />
                 </div>
-                <HintsOrErrors
-                  hintErrors={["caplow", "min", "num"]}
-                  errors={errors.password}
-                  dirty={dirtyFields.password}
-                />
+                <HintsOrErrors hintErrors={["caplow", "min", "num"]} fieldName="password" />
               </div>
               <Button
                 type="submit"
@@ -140,7 +129,7 @@ const Signup = () => {
                 disabled={!watch("email") || !watch("password") || !!errors.email || !!errors.username}>
                 Create Account
               </Button>
-            </form>
+            </Form>
           </div>
           <div className="mt-10 flex h-full flex-col justify-end text-xs">
             <div className="flex gap-1">
@@ -160,7 +149,7 @@ const Signup = () => {
           <div
             className="rounded-l-2xl rounded-br-none border-dashed border-default py-[6px] pl-[6px]"
             style={{ backgroundColor: "rgba(236,237,239,0.9)" }}>
-            <Image src="/mock-event-type-list.svg" alt="#" width="663" height="550" />
+            <Image src="/mock-event-type-list.svg" alt="#" width="663" height="550" priority />
           </div>
           <div className="mr-12 mt-8 grid h-full w-full grid-cols-3 gap-4 overflow-hidden">
             {FEATURES.map((feature) => (
