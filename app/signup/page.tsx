@@ -9,12 +9,10 @@ import { z } from "zod";
 
 import { signup } from "@/actions/auth/signup/signup";
 import { Form } from "@/components/form/Form";
-import HintsOrErrors from "@/components/form/HintsOrErrors";
+import PasswordField from "@/components/form/PasswordField";
 import { TextField } from "@/components/form/TextField";
 import UsernameField from "@/components/form/UsernameField";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { isPasswordValid } from "@/lib/isPasswordValid";
 
 const FEATURES = [
@@ -84,45 +82,9 @@ const Signup = () => {
               className="flex flex-col gap-4"
               form={formMethods}
               handleSubmit={async (values) => await signup(values)}>
-              {/* <div>
-                <Label htmlFor="username" className="mb-2">
-                  Username
-                </Label>
-                <div className="group relative mb-1 flex items-center rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-default">
-                  <div className="flex h-9 rounded-l-md border border-r-0 border-default px-3 [&:has(+_input:hover)]:border-emphasis [&:has(+_input:hover)]:border-r-default [input:hover_+_&]:border-emphasis [input:hover_+_&]:border-l-default">
-                    <div className="flex flex-col justify-center text-sm leading-7 text-default">
-                      <span className="flex whitespace-nowrap">http://localhost:3000/</span>
-                    </div>
-                  </div>
-                  <Input
-                    placeholder="username"
-                    className="!my-0 mb-2 h-9 rounded-md rounded-l-none border-l-0 bg-default text-sm leading-4 text-emphasis !ring-0 transition placeholder:text-muted hover:border-emphasis focus:border-neutral-300 focus:ring-2 focus:ring-brand-default disabled:cursor-not-allowed disabled:bg-subtle disabled:hover:border-subtle"
-                    {...register("username")}
-                  />
-                </div>
-                {errors.username?.message && (
-                  <div className="mt-2 flex items-center gap-x-2 text-sm text-red-700">
-                    <AlertCircle width="13" height="13" />
-                    <p>{errors.username?.message}</p>
-                  </div>
-                )}
-              </div> */}
-              <UsernameField label={"username"} {...register("username")} />
-              <TextField label={"email"} type="email" {...register("email")} />
-              <div>
-                <Label htmlFor="password" className="mb-2">
-                  Password
-                </Label>
-                <div>
-                  <Input
-                    type="password"
-                    placeholder="•••••••••••••"
-                    className="mb-2 h-9 rounded-md bg-default text-sm leading-4 text-emphasis transition placeholder:text-muted hover:border-emphasis focus:border-neutral-300 focus:ring-2 focus:ring-brand-default disabled:cursor-not-allowed disabled:bg-subtle disabled:hover:border-subtle"
-                    {...register("password")}
-                  />
-                </div>
-                <HintsOrErrors hintErrors={["caplow", "min", "num"]} fieldName="password" />
-              </div>
+              <UsernameField label="username" {...register("username")} />
+              <TextField label="email" type="email" {...register("email")} />
+              <PasswordField label="password" {...register("password")} hintErrors={["caplow", "num", "min"]} />
               <Button
                 type="submit"
                 className="w-full justify-center rounded-md"
