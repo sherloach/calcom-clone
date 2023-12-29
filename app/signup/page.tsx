@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarHeart, Link2, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -56,6 +57,8 @@ export const signupSchema = z.object({
 export type FormValues = z.infer<typeof signupSchema>;
 
 const Signup = () => {
+  const [usernameTaken, setUsernameTaken] = useState<boolean>(false);
+
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(signupSchema),
     mode: "onChange",
@@ -64,8 +67,10 @@ const Signup = () => {
   const {
     register,
     watch,
-    formState: { errors },
+    formState: { isSubmitting },
   } = formMethods;
+
+  // const signup = () => {};
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-muted 2xl:bg-default">
@@ -82,13 +87,27 @@ const Signup = () => {
               className="flex flex-col gap-4"
               form={formMethods}
               handleSubmit={async (values) => await signup(values)}>
-              <UsernameField label="username" {...register("username")} />
+              <UsernameField
+                label="username"
+                username={watch("username")}
+                usernameTaken={usernameTaken}
+                setUsernameTaken={(value) => setUsernameTaken(value)}
+                addOnLeading={`http://localhost:3000`}
+              />
               <TextField label="email" type="email" {...register("email")} />
               <PasswordField label="password" {...register("password")} hintErrors={["caplow", "num", "min"]} />
               <Button
                 type="submit"
                 className="w-full justify-center rounded-md"
-                disabled={!watch("email") || !watch("password") || !!errors.email || !!errors.username}>
+                disabled={
+                  !!formMethods.formState.errors.username ||
+                  !!formMethods.formState.errors.email ||
+                  !formMethods.getValues("email") ||
+                  !formMethods.getValues("password") ||
+                  !formMethods.getValues("username") ||
+                  isSubmitting ||
+                  usernameTaken
+                }>
                 Create Account
               </Button>
             </Form>

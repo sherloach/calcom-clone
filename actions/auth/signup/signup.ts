@@ -3,8 +3,8 @@
 import { z } from "zod";
 
 import { type FormValues } from "@/app/signup/page";
-import { db } from "@/lib/db";
 import { isPasswordValid } from "@/lib/isPasswordValid";
+import slugify from "@/lib/slugify";
 
 export type State = {
   errors?: {
@@ -33,6 +33,10 @@ const signupSchema = z.object({
   }),
 });
 
+// TODO: check username
+//       change to api
+//       add error api
+//       after signup then signin
 export async function signup(formData: FormValues) {
   const validatedFields = signupSchema.safeParse(formData);
 
@@ -43,21 +47,30 @@ export async function signup(formData: FormValues) {
     };
   }
 
-  const { username, email, password } = validatedFields.data;
+  const { email, password } = validatedFields.data;
 
-  try {
-    await db.user.create({
-      data: {
-        username,
-        email,
-        password,
-      },
-    });
-  } catch (error) {
-    return {
-      message: "Database Error",
-    };
+  const username = slugify(formData.username);
+  console.log("username", username);
+
+  if (!username) {
+    // res.status(422).json({ message: "Invalid username" });
+    console.log("Invalid username");
+    return;
   }
+
+  // try {
+  //   await db.user.create({
+  //     data: {
+  //       username,
+  //       email,
+  //       password,
+  //     },
+  //   });
+  // } catch (error) {
+  //   return {
+  //     message: "Database Error",
+  //   };
+  // }
 
   // revalidatePath("/organization/org_2XwLIDt5x0Ay86prfZg7BqrELWR");
   // redirect("/organization/org_2XwLIDt5x0Ay86prfZg7BqrELWR");
