@@ -72,7 +72,7 @@ const Signup = () => {
                 username={watch("username")}
                 usernameTaken={usernameTaken}
                 setUsernameTaken={(value) => setUsernameTaken(value)}
-                addOnLeading={`http://localhost:3000`}
+                addOnLeading={process.env.NEXT_PUBLIC_WEBSITE_URL}
               />
               <TextField label="email" type="email" {...register("email")} />
               <PasswordField label="password" {...register("password")} hintErrors={["caplow", "num", "min"]} />

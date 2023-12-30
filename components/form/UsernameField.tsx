@@ -44,7 +44,7 @@ const UsernameField = ({
 
   return (
     <div>
-      <TextField {...props} {...register("username")} addOnLeading={"http://localhost:8080/"} />
+      <TextField {...props} {...register("username")} addOnLeading={process.env.NEXT_PUBLIC_WEBSITE_URL} />
       {(!isSubmitting || !isSubmitted) && (
         <div className="mt-2 flex items-center text-sm text-default">
           <div className="text-sm ">
