@@ -8,13 +8,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { signupSchema } from "@/actions/auth/signup/schema";
 import { signup } from "@/actions/auth/signup/signup";
 import { Form } from "@/components/form/Form";
 import PasswordField from "@/components/form/PasswordField";
 import { TextField } from "@/components/form/TextField";
 import UsernameField from "@/components/form/UsernameField";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { signupSchema } from "@/prisma/zod-utils";
 
 const FEATURES = [
   {
@@ -34,28 +35,44 @@ const FEATURES = [
   },
 ];
 
-export type FormValues = z.infer<typeof signupSchema>;
+const signupSchemaForm = signupSchema.extend({
+  apiError: z.string().optional(), // Needed to display API errors doesnt get passed to the API
+});
+
+export type FormValues = z.infer<typeof signupSchemaForm>;
 
 const Signup = () => {
   const [usernameTaken, setUsernameTaken] = useState<boolean>(false);
 
   const formMethods = useForm<FormValues>({
-    resolver: zodResolver(signupSchema),
+    resolver: zodResolver(signupSchemaForm),
     mode: "onChange",
   });
 
   const {
     register,
     watch,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
+    setError,
   } = formMethods;
 
-  // const signup = () => {};
+  const signUp = async (values: FormValues) => {
+    const response = await signup(values);
+    console.log(response);
+
+    if (response.data) {
+      // login
+      return;
+    } else if (response.error) {
+      return setError("apiError", { message: response.error });
+    }
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-muted 2xl:bg-default">
       <div className="grid w-full max-w-[1440px] grid-cols-1 grid-rows-1 bg-muted lg:grid-cols-2 2xl:rounded-[20px] 2xl:border 2xl:border-subtle 2xl:py-6">
         <div className="flex w-full flex-col px-4 pt-6 sm:px-16 md:px-20 2xl:px-28">
+          {errors.apiError && <Alert severity="error" message={errors.apiError?.message} />}
           <div className="flex flex-col gap-2">
             <h1 className="font-cal text-[28px] leading-none">Create your account</h1>
             <p className="text-base font-medium leading-5 text-subtle">
@@ -66,7 +83,7 @@ const Signup = () => {
             <Form
               className="flex flex-col gap-4"
               form={formMethods}
-              handleSubmit={async (values) => await signup(values)}>
+              handleSubmit={async (values) => await signUp(values)}>
               <UsernameField
                 label="username"
                 username={watch("username")}

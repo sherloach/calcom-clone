@@ -1,54 +1,48 @@
 "use server";
 
-import { type FormValues } from "@/app/signup/page";
+import { createSafeAction } from "@/lib/create-safe-action";
+import { db } from "@/lib/db";
 import slugify from "@/lib/slugify";
-import { signupSchema } from "@/prisma/zod-utils";
 
-export type State = {
-  errors?: {
-    title?: string[];
-  };
-  message?: string | null;
-};
+import { signupSchema } from "./schema";
+import { InputType, ReturnType } from "./types";
 
 // TODO:
-//       change to api
-//       add error api
 //       after signup then signin
-export async function signup(formData: FormValues) {
-  const validatedFields = signupSchema.safeParse(formData);
+const handler = async (data: InputType): Promise<ReturnType> => {
+  const { username, email, password } = data;
 
-  if (!validatedFields.success) {
+  if (!username || !email || !password) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Missing fields.",
+      error: "Missing fields. Failed to sign up",
     };
   }
 
-  const { email, password } = validatedFields.data;
+  const _username = slugify(username);
+  const _email = email.toLowerCase();
+  let newUser;
 
-  const username = slugify(formData.username);
-
-  if (!username) {
-    // res.status(422).json({ message: "Invalid username" });
-    console.log("Invalid username");
-    return;
+  if (!_username) {
+    return {
+      error: "Invalid username",
+    };
   }
 
-  // try {
-  //   await db.user.create({
-  //     data: {
-  //       username,
-  //       email,
-  //       password,
-  //     },
-  //   });
-  // } catch (error) {
-  //   return {
-  //     message: "Database Error",
-  //   };
-  // }
+  try {
+    newUser = await db.user.create({
+      data: {
+        username: _username,
+        email: _email,
+        password,
+      },
+    });
+  } catch (error) {
+    return {
+      error: "Failed to sign up",
+    };
+  }
 
-  // revalidatePath("/organization/org_2XwLIDt5x0Ay86prfZg7BqrELWR");
-  // redirect("/organization/org_2XwLIDt5x0Ay86prfZg7BqrELWR");
-}
+  return { data: newUser };
+};
+
+export const signup = createSafeAction(signupSchema, handler);
