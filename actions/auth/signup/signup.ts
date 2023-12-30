@@ -1,10 +1,8 @@
 "use server";
 
-import { z } from "zod";
-
 import { type FormValues } from "@/app/signup/page";
-import { isPasswordValid } from "@/lib/isPasswordValid";
 import slugify from "@/lib/slugify";
+import { signupSchema } from "@/prisma/zod-utils";
 
 export type State = {
   errors?: {
@@ -13,27 +11,7 @@ export type State = {
   message?: string | null;
 };
 
-const signupSchema = z.object({
-  username: z.string().refine((value) => !value.includes("+"), {
-    message: "String should not contain a plus symbol (+).",
-  }),
-  email: z.string().email(),
-  password: z.string().superRefine((data, ctx) => {
-    const isStrict = false;
-    const result = isPasswordValid(data, true, isStrict);
-    Object.keys(result).map((key: string) => {
-      if (!result[key as keyof typeof result]) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: [key],
-          message: key,
-        });
-      }
-    });
-  }),
-});
-
-// TODO: check username
+// TODO:
 //       change to api
 //       add error api
 //       after signup then signin
@@ -50,7 +28,6 @@ export async function signup(formData: FormValues) {
   const { email, password } = validatedFields.data;
 
   const username = slugify(formData.username);
-  console.log("username", username);
 
   if (!username) {
     // res.status(422).json({ message: "Invalid username" });

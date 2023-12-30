@@ -14,7 +14,7 @@ import PasswordField from "@/components/form/PasswordField";
 import { TextField } from "@/components/form/TextField";
 import UsernameField from "@/components/form/UsernameField";
 import { Button } from "@/components/ui/button";
-import { isPasswordValid } from "@/lib/isPasswordValid";
+import { signupSchema } from "@/prisma/zod-utils";
 
 const FEATURES = [
   {
@@ -33,26 +33,6 @@ const FEATURES = [
     icon: Link2,
   },
 ];
-
-export const signupSchema = z.object({
-  username: z.string().refine((value) => !value.includes("+"), {
-    message: "String should not contain a plus symbol (+).",
-  }),
-  email: z.string().email(),
-  password: z.string().superRefine((data, ctx) => {
-    const isStrict = false;
-    const result = isPasswordValid(data, true, isStrict);
-    Object.keys(result).map((key: string) => {
-      if (!result[key as keyof typeof result]) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: [key],
-          message: key,
-        });
-      }
-    });
-  }),
-});
 
 export type FormValues = z.infer<typeof signupSchema>;
 

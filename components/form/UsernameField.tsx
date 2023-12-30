@@ -20,11 +20,14 @@ const UsernameField = ({
   setUsernameTaken,
   ...props
 }: React.ComponentProps<typeof TextField> & UsernameFieldProps) => {
-  const { register, formState } = useFormContext<FormValues>();
+  const {
+    register,
+    formState: { isSubmitSuccessful, isSubmitting, isSubmitted },
+  } = useFormContext<FormValues>();
   const debouncedUsername = useDebounce(username, 600);
 
   useEffect(() => {
-    if (formState.isSubmitting || formState.isSubmitSuccessful) return;
+    if (isSubmitting || isSubmitSuccessful) return;
 
     async function checkUsername() {
       if (!debouncedUsername) {
@@ -37,12 +40,12 @@ const UsernameField = ({
       });
     }
     checkUsername();
-  }, [debouncedUsername, formState.isSubmitSuccessful, formState.isSubmitting, setUsernameTaken]);
+  }, [debouncedUsername, isSubmitSuccessful, isSubmitting, setUsernameTaken]);
 
   return (
     <div>
       <TextField {...props} {...register("username")} addOnLeading={"http://localhost:8080/"} />
-      {(!formState.isSubmitting || !formState.isSubmitted) && (
+      {(!isSubmitting || !isSubmitted) && (
         <div className="mt-2 flex items-center text-sm text-default">
           <div className="text-sm ">
             {usernameTaken ? (
